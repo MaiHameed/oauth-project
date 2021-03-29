@@ -27,6 +27,10 @@
         </div>
         <div id="oauth">
         </div>
+          <button id="get-top-tracks" class="btn btn-primary">Get Top Tracks</button>
+          <!--<button type="button" onclick="printSongs()">Get Top Tracks</button>-->
+          <button class="spotify-button recommendations" id="getrecommendations" style="display: none">Get Recommendations</button>
+        </div>
       </div>
     </div>
 
@@ -107,11 +111,15 @@
             state = params.state,
             storedState = localStorage.getItem(stateKey);
 
-        if (access_token && (state == null || state !== storedState)) {
+        if (access_token && (state == null || state !== storedState)) 
+        {
           alert('There was an error during the authentication');
-        } else {
+        } 
+        else 
+        {
           localStorage.removeItem(stateKey);
-          if (access_token) {
+          if (access_token) 
+          {
             $.ajax({
                 url: 'https://api.spotify.com/v1/me',
                 headers: {
@@ -124,7 +132,9 @@
                   $('#loggedin').show();
                 }
             });
-          } else {
+          } 
+          else 
+          {
               $('#login').show();
               $('#loggedin').hide();
           }
@@ -132,7 +142,8 @@
           document.getElementById('login-button').addEventListener('click', function() {
 
             var client_id = '65aeb8cca1c44c28a4f107eeed969b9f'; // Your client id
-            var redirect_uri = 'https://maihameed.github.io/oauth-project/'; // Your redirect uri
+            //var redirect_uri = 'https://maihameed.github.io/oauth-project/'; // Your redirect uri
+            var redirect_uri = 'http://localhost:8888/'; // Your redirect uri
 
             var state = generateRandomString(16);
 
@@ -148,6 +159,87 @@
 
             window.location = url;
           }, false);
+
+          //recommendation button event listeners
+
+          var testElement = document.getElementById('get-top-tracks');
+          testElement.addEventListener('click', 
+          function() 
+            {
+              if (access_token) 
+              { 
+                $.ajax(
+                {
+                  url: 'https://api.spotify.com/v1/me/top/tracks?limit=10',
+                  headers: 
+                  {
+                    'Authorization': 'Bearer ' + access_token
+                  },
+                  success: function(response) 
+                  {
+                    $(".recommendations").show();
+
+                    console.log("button works for real tho");
+                    //spitSong(response.items);
+                    
+                  }
+                });
+              }
+              else
+              {
+                console.log("oh no");
+              }
+            },false
+          );
+
+          document.getElementById('getrecommendations').addEventListener('click', function() {getRecommendations(access_token)});
+
+          //function definitions
+          
+            /*
+          function getTopTracks(access_token) 
+          {
+            $.ajax(
+              {
+                url: 'https://api.spotify.com/v1/me/top/tracks?limit=10',
+                headers: 
+                {
+                  'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) 
+                {
+                  $(".recommendations").show();
+
+                  //printSongs();
+                  spitSong(response.items);
+                  
+                }
+              });
+              
+          }
+          function printSongs()
+          {
+            console.log("button works");
+          }
+          */
+
+
+
+
+
+
+          function spitSong(listSong)
+          {
+            listSong.map
+            (
+              function(singleSong)
+              {
+                var printBox = "<div> " + song.id
+
+                document.getElementById('top-tracks').innerHTML += printBox;
+              }
+            )
+          }
         }
       })();
     </script>
