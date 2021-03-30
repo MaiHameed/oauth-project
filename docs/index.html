@@ -148,7 +148,7 @@
             var state = generateRandomString(16);
 
             localStorage.setItem(stateKey, state);
-            var scope = 'user-read-private user-read-email';
+            var scope = 'user-read-private user-top-read user-follow-read user-read-email';
 
             var url = 'https://accounts.spotify.com/authorize';
             url += '?response_type=token';
@@ -170,6 +170,7 @@
               { 
                 $.ajax(
                 {
+                  // url: 'https://api.spotify.com/v1/me',
                   url: 'https://api.spotify.com/v1/me/top/tracks?limit=10',
                   headers: 
                   {
