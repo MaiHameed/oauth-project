@@ -30,6 +30,9 @@
           <button id="get-top-tracks" class="btn btn-primary">Get Top Tracks</button>
           <!--<button type="button" onclick="printSongs()">Get Top Tracks</button>-->
           <button class="spotify-button recommendations" id="getrecommendations" style="display: none">Get Recommendations</button>
+        
+          <div id="top-tracks">
+          </div>
         </div>
       </div>
     </div>
@@ -180,8 +183,8 @@
                   {
                     $(".recommendations").show();
 
-                    console.log("button works for real tho");
-                    //spitSong(response.items);
+                    console.log(response);
+                    spitSong(response.items);
                     
                   }
                 });
@@ -224,23 +227,31 @@
           }
           */
 
-
-
-
-
-
           function spitSong(listSong)
           {
             listSong.map
             (
               function(singleSong)
               {
-                var printBox = "<div> " + song.id
+                var printBox = "<div> " + singleSong.name + ' By ' + singleSong.artists[0].name;
 
                 document.getElementById('top-tracks').innerHTML += printBox;
               }
             )
           }
+          // function mapOverSongs(songs) {
+          //     $("#getrecommendations").show();
+          //     songs.map( function(song) {
+          //           var list = "<input type='checkbox' name='top-tracks' value='" +
+          //                   song.id + "'>" +
+          //                   "<a href='" + song.external_urls.spotify + "'>" +
+          //                   song.name +
+          //                   " by " + song.artists[0].name +
+          //                   " from the album " + song.album.name +
+          //                   "</a><br><br>";
+          //           document.getElementById('top-tracks').innerHTML += list;
+          //     });
+          // }
         }
       })();
     </script>
