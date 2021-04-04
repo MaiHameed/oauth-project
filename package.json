@@ -1,0 +1,6 @@
+{
+  "name": "oauth-project",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
