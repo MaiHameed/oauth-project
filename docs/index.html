@@ -57,6 +57,17 @@
         </div>
         <div id="oauth">
         </div>
+        <div>
+          <button id="get-top-tracks" class="btn btn-primary">Get Top Tracks</button>
+          <button id="getrecommendations" class="btn btn-primary" style="display: none">Get Recommendations</button>
+        </div>
+        <div id="top-tracks" style="display: none">
+          <h3>Top Tracks: </h3>
+        </div>
+        <div id="recommendations" style="display: none">
+          <h3>Spotify Recommendations</h3>
+        </div>
+        </div>
       </div>
     </div>
   </div>
@@ -140,11 +151,15 @@
             state = params.state,
             storedState = localStorage.getItem(stateKey);
 
-        if (access_token && (state == null || state !== storedState)) {
+        if (access_token && (state == null || state !== storedState)) 
+        {
           alert('There was an error during the authentication');
-        } else {
+        } 
+        else 
+        {
           localStorage.removeItem(stateKey);
-          if (access_token) {
+          if (access_token) 
+          {
             $.ajax({
                 url: 'https://api.spotify.com/v1/me',
                 headers: {
@@ -157,21 +172,25 @@
                   $('#loggedin').show();
                 }
             });
-          } else {
+          } 
+          else 
+          {
               $('#login').show();
               $('#loggedin').hide();
           }
 
+          //login button listener 
           document.getElementById('login-button').addEventListener('click', function() {
 
             var client_id = '65aeb8cca1c44c28a4f107eeed969b9f'; // Your client id
             //var redirect_uri = 'https://maihameed.github.io/oauth-project/'; // Your redirect uri
-            var redirect_uri = 'http://localhost:8888/';
+
+            var redirect_uri = 'http://localhost:8888/'; // Your redirect uri
 
             var state = generateRandomString(16);
 
             localStorage.setItem(stateKey, state);
-            var scope = 'user-read-private user-read-email';
+            var scope = 'user-read-private user-top-read user-follow-read user-read-email';
 
             var url = 'https://accounts.spotify.com/authorize';
             url += '?response_type=token';
@@ -182,6 +201,109 @@
 
             window.location = url;
           }, false);
+
+          //recommendation button event listeners
+
+          var topSongs;
+          var testElement = document.getElementById('get-top-tracks');
+          testElement.addEventListener('click', 
+          function() 
+            {
+              getTopTracks(access_token);
+            },false
+          );
+
+          document.getElementById('getrecommendations').addEventListener('click', function() {getRecs(access_token,topSongs)});
+
+          //recommendation function definitions
+
+          //get the user's top 10 tracks
+          function getTopTracks(access_token) 
+          {
+            $.ajax(
+              {
+                url: 'https://api.spotify.com/v1/me/top/tracks?limit=10',
+                headers: 
+                {
+                  'Authorization': 'Bearer ' + access_token
+                },
+                success: function(response) 
+                {
+                  topSongs = response.items;
+                  displayTopSongs(response.items);
+                  
+                }
+              });
+              
+          }
+
+          //display the top ten tracks
+          function displayTopSongs(songs) 
+          {
+            if(songs.length != 0)
+            {
+              $("#top-tracks").show();
+              $("#getrecommendations").show();
+
+              songs.map( function(song) 
+              {
+                var list = "<div> Song name: " + song.name + "</div>";
+                document.getElementById('top-tracks').innerHTML += list;
+              });
+            }           
+          }
+
+          //request the api for recommendation information based on the top tracks
+          function getRecs(access_token,songs) 
+          {
+              document.getElementById('recommendations').innerHTML = "<h3>Spotify Recommendations</h3>";
+
+                var divs = document.getElementsByName('top-tracks');
+                var selected = "";
+                for (var i=0, n=5; i<n; i++) 
+                {
+                  if(songs[i].id != "")
+                  {
+                    selected += songs[i].id+",";
+                  }
+                }
+                if(songs.length != 0)
+                {
+                  selected = selected.slice(0, -1);
+                  $.ajax(
+                      {
+                        url: 'https://api.spotify.com/v1/recommendations?market=US&seed_tracks=' + selected + '&limit=10',
+                        headers: 
+                        {
+                          'Authorization': 'Bearer ' + access_token
+                        },
+                        success: function(response) 
+                        {
+                            displayRecs(response.tracks);
+                        }
+                      }
+                    );
+                }
+                else
+                {
+                  $("#recommendations").show();
+                  var noRecs = "<div> Not enough tracks to make a recommendation list! <div>";
+                  document.getElementById('recommendations').innerHTML += noRecs;
+                }
+          }
+
+          //display the recommendations
+          function displayRecs(recommendations) 
+          {
+            $("#recommendations").show();
+            recommendations.map(function (song) 
+            {
+              var list =
+                  "<div><a target='_blank' href='" + song.external_urls.spotify + "'>" + song.name + "</a>\n" + song.artists[0].name + "\n" + song.album.name + "\n <br>";
+              document.getElementById('recommendations').innerHTML += list;
+            });
+          }
+
         }
       })();
     </script>
