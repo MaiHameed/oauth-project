@@ -1,7 +1,6 @@
-# oauth-project
-A simple web app that has a Spotify login feature using OAuth. Currently hosted on [GitHub Pages](maihameed.github.io/oauth-project).
-Login using your Spotify account, and the app with display basic user profile information as well as top and recommended songs pulled 
-from the Spotify Web API.
+# Spotify OAuth Project
+Currently hosted on [GitHub Pages](maihameed.github.io/oauth-project). Read through the [project report](report.pdf) for more information. In short, the app allows you to 
+login using your Spotify account, and the app with display basic user profile information as well as top and recommended songs pulled from the Spotify Web API.
 
 # Running the app locally for dev
 - Run `npm install` the first time you run the app to install all dependancies locally.
